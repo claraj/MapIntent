@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
 				String mapSearchString = mapSearchBox.getText().toString();
 
-				//TODO if mapSearchString is blank, display warning Snackbar and don't launch Map.
+				//If mapSearchString is blank, display warning Snackbar and don't launch Map.
 
 				if (mapSearchString.length() == 0) {
 					Snackbar.make(findViewById(android.R.id.content), "Enter a location", Snackbar.LENGTH_SHORT).show();
@@ -63,12 +64,15 @@ public class MainActivity extends AppCompatActivity {
 
 						Uri geoUri = Uri.parse(geoUriString);
 						Intent mapIntent = new Intent(Intent.ACTION_VIEW, geoUri);
-						Snackbar.make(findViewById(android.R.id.content), "Launching map", Snackbar.LENGTH_SHORT).show();
+
+						//Compare and contrast Toast vs. Snackbar - Toast will still be visible while Maps launch; Snackbar is tied to MainActivity
+						Toast.makeText(MainActivity.this, "Launching Map", Toast.LENGTH_LONG);
 						startActivity(mapIntent);
+
 					} else {
 
-						//TODO Snackbar indicating no results found for location
-						Snackbar.make(findViewById(android.R.id.content), "No results found for that location", Snackbar.LENGTH_SHORT).show();
+						//Snackbar indicating no results found for location
+						Snackbar.make(findViewById(android.R.id.content), "No results found for that location", Snackbar.LENGTH_LONG).show();
 					}
 
 				} catch (IOException ioe) {
