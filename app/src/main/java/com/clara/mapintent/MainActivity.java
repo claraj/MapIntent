@@ -18,7 +18,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-	static final String TAG = "Nap Intent";
+	static final String TAG = "Map Intent";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +28,6 @@ public class MainActivity extends AppCompatActivity {
 		final EditText mapSearchBox = (EditText) findViewById(R.id.map_search_box);
 		Button mapSearchButton = (Button) findViewById(R.id.map_search_button);
 
-		//Geocoder object
-		final Geocoder geocoder = new Geocoder(this);
-
 		mapSearchButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -38,16 +35,16 @@ public class MainActivity extends AppCompatActivity {
 				String mapSearchString = mapSearchBox.getText().toString();
 
 				//If mapSearchString is blank, display warning Snackbar and don't launch Map.
-
 				if (mapSearchString.length() == 0) {
 					Snackbar.make(findViewById(android.R.id.content), "Enter a location", Snackbar.LENGTH_SHORT).show();
 					return;
 				}
 
+				Geocoder geocoder = new Geocoder(MainActivity.this);  //Create a Geocoder, tell it what Activity it belongs to
+
 				try {
-
-					List<Address> addressList = geocoder.getFromLocationName(mapSearchString, 1);
-
+					List<Address> addressList = geocoder.getFromLocationName(mapSearchString, 1);  // Second arg is numer of results requested. We only want the first
+					//Verify that there is at least one result
 					if (addressList.size() == 1) {
 
 						// To launch a mapping application, need a URI in the form geo:lat,long
@@ -56,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 						// https://developer.android.com/guide/components/intents-common.html#Maps
 						Address firstAddress = addressList.get(0);
 
-						Log.d(TAG, "First address is " + firstAddress);
+						Log.d(TAG, "First address is " + firstAddress);    // No System.out.println() ! Use Log for debugging statements
 
 						//For the Map, lat and long are needed. A URI of the format geo:lat,long is required
 						String geoUriString = String.format("geo:%f,%f", firstAddress.getLatitude(), firstAddress.getLongitude());
@@ -70,19 +67,15 @@ public class MainActivity extends AppCompatActivity {
 						startActivity(mapIntent);
 
 					} else {
-
-						//Snackbar indicating no results found for location
+						//addressList is empty. Snackbar indicating no results found for location
 						Snackbar.make(findViewById(android.R.id.content), "No results found for that location", Snackbar.LENGTH_LONG).show();
 					}
 
 				} catch (IOException ioe) {
-					Log.e(TAG, "Error during geocoding", ioe);
+					Log.e(TAG, "Error during geocoding", ioe);    //Log also useful for errors.
 					Snackbar.make(findViewById(android.R.id.content), "Sorry, an error occurred", Snackbar.LENGTH_SHORT).show();
-
 				}
-
 			}
 		});
-
 	}
 }
